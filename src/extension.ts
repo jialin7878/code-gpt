@@ -68,6 +68,16 @@ async function simplifyCode(): Promise<string> {
   return output.data.choices[0].text;
 }
 
+async function standardiseCode(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Rewrite this code based on language style guide: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
 async function generateTestcases(): Promise<string> {
   const code = getSelectedText();
   const output = await openai.createCompletion({
@@ -131,6 +141,17 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let standardiseCodeCommand = vscode.commands.registerCommand(
+    "code-gpt.standardiseCode",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to rewrite code based on language style guide..."
+      );
+      const output = await standardiseCode();
+      replaceText(output);
+    }
+  );
+
   let generateTestcasesCommand = vscode.commands.registerCommand(
     "code-gpt.generateTestcases",
     async () => {
@@ -146,6 +167,7 @@ export function activate(context: vscode.ExtensionContext) {
     explainCodeCommand,
     writeDocumentationCommand,
     simplifyCodeCommand,
+    standardiseCodeCommand,
     generateTestcasesCommand
   );
 }
