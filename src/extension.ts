@@ -33,6 +33,14 @@ function insertText(text: string) {
   });
 }
 
+// replace selection with input text
+function replaceText(text: string) {
+  const editor = vscode.window.activeTextEditor;
+  editor?.edit((editBuilder) => {
+    editBuilder.replace(editor?.selection, text);
+  });
+}
+
 async function explainCode(): Promise<string> {
   const code = getSelectedText();
   const output = await openai.createCompletion({
@@ -48,6 +56,16 @@ async function writeDocumentation(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
+async function simplifyCode(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Simplify this code: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text;
@@ -95,7 +113,22 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(explainCodeCommand, writeDocumentationCommand);
+  let simplifyCodeCommand = vscode.commands.registerCommand(
+    "code-gpt.simplifyCode",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to check for simplifications..."
+      );
+      const output = await simplifyCode();
+      replaceText(output);
+    }
+  );
+
+  context.subscriptions.push(
+    explainCodeCommand,
+    writeDocumentationCommand,
+    simplifyCodeCommand
+  );
 }
 
 // This method is called when your extension is deactivated
