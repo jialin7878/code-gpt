@@ -10,6 +10,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onView:codegpt.output",
     "onCommand:code-gpt.helloWorld"
   ],
   "main": "./out/extension.js",
@@ -19,7 +20,25 @@
         "command": "code-gpt.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codegpt",
+          "title": "CodeGPT",
+          "icon": "static/chatgpt.png"
+        }
+      ]
+    },
+    "views": {
+      "codegpt": [
+        {
+          "type": "webview",
+          "id": "codegpt.output",
+          "name": "CodeGPT"					
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
