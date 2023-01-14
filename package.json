@@ -10,16 +10,31 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:code-gpt.helloWorld"
+    "onCommand:code-gpt.explainCode"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "code-gpt.helloWorld",
-        "title": "Hello World"
+        "command": "code-gpt.explainCode",
+        "title": "Explain code with ChatGPT"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "code-gpt.explainCode",
+          "group": "code-gpt-menu-group@1",
+          "when": "editorTextFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "code-gpt.explainCode",
+          "when": "editorHasSelection"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
