@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { TextEditorEdit } from "vscode";
 
 const { Configuration, OpenAIApi } = require("openai");
 require("dotenv").config({ path: __dirname + "/../.env" });
@@ -11,6 +10,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 const MODEL = "text-davinci-003";
+const MAX_OPENAI_TOKENS = 200;
 
 function getSelectedText(): string {
   const editor = vscode.window.activeTextEditor;
@@ -37,7 +37,8 @@ async function explainCode(): Promise<string> {
   const code = getSelectedText();
   const output = await openai.createCompletion({
     model: MODEL,
-    prompt: "Explain this function: \n" + code,
+    prompt: "Explain this function:\n" + code,
+    max_tokens: MAX_OPENAI_TOKENS
   });
   return output.data.choices[0].text;
 }
@@ -47,6 +48,7 @@ async function writeDocumentation(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS
   });
   return output.data.choices[0].text;
 }
