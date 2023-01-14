@@ -18,7 +18,7 @@
     "commands": [
       {
         "command": "code-gpt.explainCode",
-        "title": "[CodeGPT] Explain this function"
+        "title": "[CodeGPT] Explain this code"
       },
       {
         "command": "code-gpt.writeDocumentation",
