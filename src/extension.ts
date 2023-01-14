@@ -33,8 +33,7 @@ function insertText(text: string) {
   });
 }
 
-async function explainCode(): Promise<string> {
-  const code = getSelectedText();
+async function explainCode(code: string): Promise<string> {  
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Explain this function:\n" + code,
@@ -79,8 +78,13 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to explain this code..."
       );
-      const output = await explainCode();
-      provider.displayOutput(output);
+      const code = getSelectedText();
+      const output = (await explainCode(code)).trim();
+      provider.explainCodeOutput(
+        "The explanation for the code is:",
+        code,
+        output
+      );
     }
   );
 
@@ -124,9 +128,15 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
   }
 
-  public displayOutput(output: string) {
+  public explainCodeOutput(title: string, code: string, output: string) {
     if (this._view) {
-      this._view.webview.postMessage({ value: output });
+      this._view.webview.postMessage(
+        {
+          title: title,
+          code: code,
+          output: output
+        }
+      );
     }
   }
 
@@ -134,16 +144,24 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
     );
+    const styleMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css')
+    );
 
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>ChatGPT</title>
+        <link href="${styleMainUri}" rel="stylesheet">
+				<title>CodeGPT</title>
 			</head>
 			<body>
-        <div id="output">
+        <div class="main">
+          <h3 class="title">Hi, I am ChatGPT.</h3>
+          <hr/>
+          <div id="output">
+          </div>
         </div>
         <script src="${scriptUri}"></script>
 			</body>
