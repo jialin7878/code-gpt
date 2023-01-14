@@ -47,8 +47,7 @@ async function explainCode(code: string): Promise<string> {
   return output.data.choices[0].text;
 }
 
-async function writeDocumentation(): Promise<string> {
-  const code = getSelectedText();
+async function writeDocumentation(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
@@ -57,8 +56,7 @@ async function writeDocumentation(): Promise<string> {
   return output.data.choices[0].text;
 }
 
-async function simplifyCode(): Promise<string> {
-  const code = getSelectedText();
+async function simplifyCode(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Simplify this code: \n" + code,
@@ -67,8 +65,7 @@ async function simplifyCode(): Promise<string> {
   return output.data.choices[0].text;
 }
 
-async function standardiseCode(): Promise<string> {
-  const code = getSelectedText();
+async function standardiseCode(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Rewrite this code based on language style guide: \n" + code,
@@ -77,8 +74,7 @@ async function standardiseCode(): Promise<string> {
   return output.data.choices[0].text;
 }
 
-async function generateTestcases(): Promise<string> {
-  const code = getSelectedText();
+async function generateTestcases(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Generate testcases for this function: \n" + code,
@@ -115,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
       const code = getSelectedText();
       const output = (await explainCode(code)).trim();
-      provider.explainCodeOutput(
+      provider.displayOutput(
         "The explanation for the code is:",
         code,
         output
@@ -129,7 +125,8 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to write documentation for this code..."
       );
-      const output = await writeDocumentation();
+      const code = getSelectedText();
+      const output = await writeDocumentation(code);
       insertText(output);
     }
   );
@@ -140,7 +137,8 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to check for simplifications..."
       );
-      const output = await simplifyCode();
+      const code = getSelectedText();
+      const output = await simplifyCode(code);
       replaceText(output);
     }
   );
@@ -151,7 +149,8 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to rewrite code based on language style guide..."
       );
-      const output = await standardiseCode();
+      const code = getSelectedText();
+      const output = await standardiseCode(code);
       replaceText(output);
     }
   );
@@ -162,8 +161,13 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to generate testcases..."
       );
-      const output = await generateTestcases();
-      // TODO: display output
+      const code = getSelectedText();
+      const output = await generateTestcases(code);
+      provider.displayOutput(
+        "Test cases generated for this function are:",
+        code,
+        output
+      );
     }
   );
 
@@ -202,7 +206,7 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
   }
 
-  public explainCodeOutput(title: string, code: string, output: string) {
+  public displayOutput(title: string, code: string, output: string) {
     if (this._view) {
       this._view.webview.postMessage(
         {
