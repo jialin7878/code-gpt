@@ -157,7 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
       const code = getSelectedText();
       const output = await generateTestcases(code);
       provider.displayOutput(
-        "Test cases generated for this function are:",
+        "Testcases generated for this function are:",
         code,
         output
       );
