@@ -45,7 +45,7 @@ async function explainCode(): Promise<string> {
     prompt: "Explain this function:\n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
-  return output.data.choices[0].text;
+  return output.data.choices[0].text.trim();
 }
 
 async function writeDocumentation(): Promise<string> {
@@ -55,7 +55,7 @@ async function writeDocumentation(): Promise<string> {
     prompt: "Insert documentation for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
-  return output.data.choices[0].text;
+  return output.data.choices[0].text.trim();
 }
 
 async function simplifyCode(): Promise<string> {
@@ -65,7 +65,7 @@ async function simplifyCode(): Promise<string> {
     prompt: "Simplify this code: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
-  return output.data.choices[0].text;
+  return output.data.choices[0].text.trim();
 }
 
 async function standardiseCode(): Promise<string> {
@@ -75,7 +75,7 @@ async function standardiseCode(): Promise<string> {
     prompt: "Rewrite this code based on language style guide: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
-  return output.data.choices[0].text;
+  return output.data.choices[0].text.trim();
 }
 
 async function generateTestcases(): Promise<string> {
@@ -85,7 +85,7 @@ async function generateTestcases(): Promise<string> {
     prompt: "Generate testcases for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
-  return output.data.choices[0].text;
+  return output.data.choices[0].text.trim();
 }
 
 // This method is called when your extension is activated
