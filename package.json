@@ -27,6 +27,10 @@
       {
         "command": "code-gpt.simplifyCode",
         "title": "[CodeGPT] Simplify code"
+      },
+      {
+        "command": "code-gpt.generateTestcases",
+        "title": "[CodeGPT] Generate testcases for this function"
       }
     ],
     "viewsContainers": {
@@ -63,6 +67,11 @@
           "command": "code-gpt.simplifyCode",
           "group": "code-gpt-menu-group@3",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.generateTestcases",
+          "group": "code-gpt-menu-group@4",
+          "when": "editorTextFocus"
         }
       ],
       "commandPalette": [
@@ -76,6 +85,10 @@
         },
         {
           "command": "code-gpt.simplifyCode",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.generateTestcases",
           "when": "editorHasSelection"
         }
       ]

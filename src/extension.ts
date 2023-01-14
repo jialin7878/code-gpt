@@ -26,10 +26,7 @@ function insertText(text: string) {
   const startPosition = editor?.selection.start;
   const startLine = editor?.document.lineAt(startPosition!).lineNumber;
   editor?.edit((editBuilder) => {
-    editBuilder.insert(
-      new vscode.Position(startLine!, 0),
-      "/*\n" + text + "\n*/\n"
-    );
+    editBuilder.insert(new vscode.Position(startLine!, 0), "\n" + text + "\n");
   });
 }
 
@@ -66,6 +63,16 @@ async function simplifyCode(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Simplify this code: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
+async function generateTestcases(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Generate testcases for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text;
@@ -124,10 +131,22 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let generateTestcasesCommand = vscode.commands.registerCommand(
+    "code-gpt.generateTestcases",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to generate testcases..."
+      );
+      const output = await generateTestcases();
+      // TODO: display output
+    }
+  );
+
   context.subscriptions.push(
     explainCodeCommand,
     writeDocumentationCommand,
-    simplifyCodeCommand
+    simplifyCodeCommand,
+    generateTestcasesCommand
   );
 }
 
