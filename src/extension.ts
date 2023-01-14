@@ -9,6 +9,7 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+const MODEL = "text-davinci-003";
 
 // Example
 /*
@@ -20,6 +21,22 @@ async function runCompletion() {
   console.log(completion.data.choices[0].text);
 }
 */
+
+function getSelectedText(): string {
+  const editor = vscode.window.activeTextEditor;
+  const selectedText = editor?.document.getText(editor.selection);
+  // Should not be undefined
+  return selectedText!;
+}
+
+async function explainCode(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Explain this code: \n" + code,
+  });
+  return output.data.choices[0].text;
+}
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -33,10 +50,9 @@ export function activate(context: vscode.ExtensionContext) {
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
     "code-gpt.explainCode",
-    () => {
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from CodeGPT!");
+    async () => {
+      const output = await explainCode();
+      vscode.window.showInformationMessage(output);
     }
   );
 
