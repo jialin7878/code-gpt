@@ -39,6 +39,10 @@
       {
         "command": "code-gpt.analyzeTimeComplexity",
         "title": "[CodeGPT] Analyze time complexity for this function"
+      },
+      {
+        "command": "code-gpt.analyzeSpaceComplexity",
+        "title": "[CodeGPT] Analyze space complexity for this function"
       }
     ],
     "viewsContainers": {
@@ -90,6 +94,11 @@
           "command": "code-gpt.analyzeTimeComplexity",
           "group": "code-gpt-menu-group@6",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.analyzeSpaceComplexity",
+          "group": "code-gpt-menu-group@7",
+          "when": "editorTextFocus"
         }
       ],
       "commandPalette": [
@@ -115,6 +124,10 @@
         },
         {
           "command": "code-gpt.analyzeTimeComplexity",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.analyzeSpaceComplexity",
           "when": "editorHasSelection"
         }
       ]
