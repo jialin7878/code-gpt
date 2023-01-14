@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
     "code-gpt.explainCode",
     async () => {
       const output = await explainCode();
-      vscode.window.showInformationMessage(output);
+      provider.displayOutput(output);
     }
   );
 
@@ -88,19 +88,23 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
 		webviewView.webview.options = {
 			// Allow scripts in the webview
 			enableScripts: true,
-
 			localResourceRoots: [
 				this._extensionUri
 			]
 		};
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-		webviewView.webview.onDidReceiveMessage(data => {
-		});
 	}
 
+  public displayOutput(output: string) {
+		if (this._view) {
+			this._view.webview.postMessage({ value: output });
+		}
+  }
+
 	private _getHtmlForWebview(webview: vscode.Webview) {
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+
 		return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -109,7 +113,9 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
 				<title>ChatGPT</title>
 			</head>
 			<body>
-        <h1>Hello world!</h1>
+        <div id="output">
+        </div>
+        <script src="${scriptUri}"></script>
 			</body>
 			</html>`;
 	}
