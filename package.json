@@ -17,7 +17,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "code-gpt.explainFunction",
+        "command": "code-gpt.explainCode",
         "title": "Explain this function with ChatGPT"
       },
       {
