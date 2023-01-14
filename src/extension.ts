@@ -19,6 +19,13 @@ function getSelectedText(): string {
   return selectedText!;
 }
 
+function getLanguageOfDocument(): string {
+  const editor = vscode.window.activeTextEditor;
+  const languageId = editor?.document.languageId;
+  console.log(languageId);
+  return languageId!;
+}
+
 // inserts input text before current line
 function insertText(text: string) {
   console.log(text);
@@ -38,7 +45,7 @@ function replaceText(text: string) {
   });
 }
 
-async function explainCode(code: string): Promise<string> {  
+async function explainCode(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Explain this function:\n" + code,
@@ -65,10 +72,13 @@ async function simplifyCode(code: string): Promise<string> {
   return output.data.choices[0].text.trim();
 }
 
-async function standardiseCode(code: string): Promise<string> {
+async function standardiseCode(
+  code: string,
+  language: string
+): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
-    prompt: "Rewrite this code based on language style guide: \n" + code,
+    prompt: `Rewrite this code based on ${language} style guide:\n ${code}`,
     max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text.trim();
@@ -78,6 +88,15 @@ async function generateTestcases(code: string): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Generate testcases for this function: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text.trim();
+}
+
+async function analyzeTimeComplexity(code: string): Promise<string> {
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Analyze the time complexity for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text.trim();
@@ -104,11 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
       const code = getSelectedText();
       const output = (await explainCode(code)).trim();
-      provider.displayOutput(
-        "The explanation for the code is:",
-        code,
-        output
-      );
+      provider.displayOutput("The explanation for the code is:", code, output);
     }
   );
 
@@ -139,11 +154,12 @@ export function activate(context: vscode.ExtensionContext) {
   let standardiseCodeCommand = vscode.commands.registerCommand(
     "code-gpt.standardiseCode",
     async () => {
+      const language = getLanguageOfDocument();
       vscode.window.showInformationMessage(
-        "Pinging ChatGPT to rewrite code based on language style guide..."
+        `Pinging ChatGPT to rewrite code based on ${language} style guide...`
       );
       const code = getSelectedText();
-      const output = await standardiseCode(code);
+      const output = await standardiseCode(code, language);
       replaceText(output);
     }
   );
@@ -164,12 +180,29 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let analyzeTimeComplexityCommand = vscode.commands.registerCommand(
+    "code-gpt.analyzeTimeComplexity",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to analyze time complexity of this function..."
+      );
+      const code = getSelectedText();
+      const output = await analyzeTimeComplexity(code);
+      provider.displayOutput(
+        "The time complexity of this function is:",
+        code,
+        output
+      );
+    }
+  );
+
   context.subscriptions.push(
     explainCodeCommand,
     writeDocumentationCommand,
     simplifyCodeCommand,
     standardiseCodeCommand,
-    generateTestcasesCommand
+    generateTestcasesCommand,
+    analyzeTimeComplexityCommand
   );
 }
 
@@ -201,13 +234,11 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
 
   public displayOutput(title: string, code: string, output: string) {
     if (this._view) {
-      this._view.webview.postMessage(
-        {
-          title: title,
-          code: code,
-          output: output
-        }
-      );
+      this._view.webview.postMessage({
+        title: title,
+        code: code,
+        output: output,
+      });
     }
   }
 
@@ -216,7 +247,7 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
     );
     const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css')
+      vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
     );
 
     return `<!DOCTYPE html>

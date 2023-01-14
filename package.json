@@ -35,6 +35,10 @@
       {
         "command": "code-gpt.generateTestcases",
         "title": "[CodeGPT] Generate testcases for this function"
+      },
+      {
+        "command": "code-gpt.analyzeTimeComplexity",
+        "title": "[CodeGPT] Analyze time complexity for this function"
       }
     ],
     "viewsContainers": {
@@ -81,6 +85,11 @@
           "command": "code-gpt.generateTestcases",
           "group": "code-gpt-menu-group@5",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.analyzeTimeComplexity",
+          "group": "code-gpt-menu-group@6",
+          "when": "editorTextFocus"
         }
       ],
       "commandPalette": [
@@ -102,6 +111,10 @@
         },
         {
           "command": "code-gpt.generateTestcases",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.analyzeTimeComplexity",
           "when": "editorHasSelection"
         }
       ]
