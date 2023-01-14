@@ -17,8 +17,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "code-gpt.explainCode",
-        "title": "Explain code with ChatGPT"
+        "command": "code-gpt.explainFunction",
+        "title": "Explain this function with ChatGPT"
+      },
+      {
+        "command": "code-gpt.writeDocumentation",
+        "title": "Write documentation for this function with ChatGPT"
       }
     ],
     "viewsContainers": {
@@ -45,11 +49,20 @@
           "command": "code-gpt.explainCode",
           "group": "code-gpt-menu-group@1",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.writeDocumentation",
+          "group": "code-gpt-menu-group@2",
+          "when": "editorTextFocus"
         }
       ],
       "commandPalette": [
         {
           "command": "code-gpt.explainCode",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.writeDocumentation",
           "when": "editorHasSelection"
         }
       ]

@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { TextEditorEdit } from "vscode";
 
 const { Configuration, OpenAIApi } = require("openai");
 require("dotenv").config({ path: __dirname + "/../.env" });
@@ -11,17 +12,6 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 const MODEL = "text-davinci-003";
 
-// Example
-/*
-async function runCompletion() {
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: "How are you today?",
-  });
-  console.log(completion.data.choices[0].text);
-}
-*/
-
 function getSelectedText(): string {
   const editor = vscode.window.activeTextEditor;
   const selectedText = editor?.document.getText(editor.selection);
@@ -29,11 +19,34 @@ function getSelectedText(): string {
   return selectedText!;
 }
 
+// inserts input text before current line
+function insertText(text: string) {
+  console.log(text);
+  const editor = vscode.window.activeTextEditor;
+  const startPosition = editor?.selection.start;
+  const startLine = editor?.document.lineAt(startPosition!).lineNumber;
+  editor?.edit((editBuilder) => {
+    editBuilder.insert(
+      new vscode.Position(startLine!, 0),
+      "/*\n" + text + "\n*/\n"
+    );
+  });
+}
+
 async function explainCode(): Promise<string> {
   const code = getSelectedText();
   const output = await openai.createCompletion({
     model: MODEL,
-    prompt: "Explain this code: \n" + code,
+    prompt: "Explain this function: \n" + code,
+  });
+  return output.data.choices[0].text;
+}
+
+async function writeDocumentation(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Insert documentation for this function: \n" + code,
   });
   return output.data.choices[0].text;
 }
@@ -58,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
+  let explainCodeCommand = vscode.commands.registerCommand(
     "code-gpt.explainCode",
     async () => {
       const output = await explainCode();
@@ -66,7 +79,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(disposable);
+  let writeDocumentationCommand = vscode.commands.registerCommand(
+    "code-gpt.writeDocumentation",
+    async () => {
+      const output = await writeDocumentation();
+      insertText(output);
+    }
+  );
+
+  context.subscriptions.push(explainCodeCommand, writeDocumentationCommand);
 }
 
 // This method is called when your extension is deactivated
