@@ -38,7 +38,7 @@ async function explainCode(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Explain this function:\n" + code,
-    max_tokens: MAX_OPENAI_TOKENS
+    max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text;
 }
@@ -48,7 +48,7 @@ async function writeDocumentation(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
-    max_tokens: MAX_OPENAI_TOKENS
+    max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text;
 }
@@ -76,6 +76,9 @@ export function activate(context: vscode.ExtensionContext) {
   let explainCodeCommand = vscode.commands.registerCommand(
     "code-gpt.explainCode",
     async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to explain this code..."
+      );
       const output = await explainCode();
       provider.displayOutput(output);
     }
@@ -84,6 +87,9 @@ export function activate(context: vscode.ExtensionContext) {
   let writeDocumentationCommand = vscode.commands.registerCommand(
     "code-gpt.writeDocumentation",
     async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to write documentation for this code..."
+      );
       const output = await writeDocumentation();
       insertText(output);
     }
