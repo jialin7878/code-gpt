@@ -18,11 +18,23 @@
     "commands": [
       {
         "command": "code-gpt.explainCode",
-        "title": "Explain this function with ChatGPT"
+        "title": "[CodeGPT] Explain this function"
       },
       {
         "command": "code-gpt.writeDocumentation",
-        "title": "Write documentation for this function with ChatGPT"
+        "title": "[CodeGPT] Write documentation for this function"
+      },
+      {
+        "command": "code-gpt.simplifyCode",
+        "title": "[CodeGPT] Simplify code"
+      },
+      {
+        "command": "code-gpt.standardiseCode",
+        "title": "[CodeGPT] Rewrite code based on language style guide"
+      },
+      {
+        "command": "code-gpt.generateTestcases",
+        "title": "[CodeGPT] Generate testcases for this function"
       }
     ],
     "viewsContainers": {
@@ -54,6 +66,21 @@
           "command": "code-gpt.writeDocumentation",
           "group": "code-gpt-menu-group@2",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.simplifyCode",
+          "group": "code-gpt-menu-group@3",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.standardiseCode",
+          "group": "code-gpt-menu-group@4",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "code-gpt.generateTestcases",
+          "group": "code-gpt-menu-group@5",
+          "when": "editorTextFocus"
         }
       ],
       "commandPalette": [
@@ -63,6 +90,18 @@
         },
         {
           "command": "code-gpt.writeDocumentation",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.simplifyCode",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.standardiseCode",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code-gpt.generateTestcases",
           "when": "editorHasSelection"
         }
       ]

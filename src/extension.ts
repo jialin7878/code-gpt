@@ -26,10 +26,15 @@ function insertText(text: string) {
   const startPosition = editor?.selection.start;
   const startLine = editor?.document.lineAt(startPosition!).lineNumber;
   editor?.edit((editBuilder) => {
-    editBuilder.insert(
-      new vscode.Position(startLine!, 0),
-      "/*\n" + text + "\n*/\n"
-    );
+    editBuilder.insert(new vscode.Position(startLine!, 0), "\n" + text + "\n");
+  });
+}
+
+// replace selection with input text
+function replaceText(text: string) {
+  const editor = vscode.window.activeTextEditor;
+  editor?.edit((editBuilder) => {
+    editBuilder.replace(editor?.selection, text);
   });
 }
 
@@ -47,6 +52,36 @@ async function writeDocumentation(): Promise<string> {
   const output = await openai.createCompletion({
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
+async function simplifyCode(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Simplify this code: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
+async function standardiseCode(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Rewrite this code based on language style guide: \n" + code,
+    max_tokens: MAX_OPENAI_TOKENS,
+  });
+  return output.data.choices[0].text;
+}
+
+async function generateTestcases(): Promise<string> {
+  const code = getSelectedText();
+  const output = await openai.createCompletion({
+    model: MODEL,
+    prompt: "Generate testcases for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
   });
   return output.data.choices[0].text;
@@ -99,7 +134,46 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(explainCodeCommand, writeDocumentationCommand);
+  let simplifyCodeCommand = vscode.commands.registerCommand(
+    "code-gpt.simplifyCode",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to check for simplifications..."
+      );
+      const output = await simplifyCode();
+      replaceText(output);
+    }
+  );
+
+  let standardiseCodeCommand = vscode.commands.registerCommand(
+    "code-gpt.standardiseCode",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to rewrite code based on language style guide..."
+      );
+      const output = await standardiseCode();
+      replaceText(output);
+    }
+  );
+
+  let generateTestcasesCommand = vscode.commands.registerCommand(
+    "code-gpt.generateTestcases",
+    async () => {
+      vscode.window.showInformationMessage(
+        "Pinging ChatGPT to generate testcases..."
+      );
+      const output = await generateTestcases();
+      // TODO: display output
+    }
+  );
+
+  context.subscriptions.push(
+    explainCodeCommand,
+    writeDocumentationCommand,
+    simplifyCodeCommand,
+    standardiseCodeCommand,
+    generateTestcasesCommand
+  );
 }
 
 // This method is called when your extension is deactivated
