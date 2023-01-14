@@ -1,7 +1,25 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import * as chatgpt from "chatgpt";
+
+const { Configuration, OpenAIApi } = require("openai");
+require("dotenv").config({ path: __dirname + "/../.env" });
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+// Example
+/*
+async function runCompletion() {
+  const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: "How are you today?",
+  });
+  console.log(completion.data.choices[0].text);
+}
+*/
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
