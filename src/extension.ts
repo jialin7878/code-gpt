@@ -48,6 +48,13 @@ export function activate(context: vscode.ExtensionContext) {
   // Create Webview
   const provider = new CodeGPTOutputView(context.extensionUri);
 
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      CodeGPTOutputView.viewType,
+      provider
+    )
+  );
+
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
@@ -59,53 +66,47 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(CodeGPTOutputView.viewType, provider),
-    disposable
-  );
+  context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
 
 class CodeGPTOutputView implements vscode.WebviewViewProvider {
+  public static readonly viewType = "codegpt.output";
 
-	public static readonly viewType = 'codegpt.output';
+  private _view?: vscode.WebviewView;
 
-	private _view?: vscode.WebviewView;
+  constructor(private readonly _extensionUri: vscode.Uri) {}
 
-	constructor(
-		private readonly _extensionUri: vscode.Uri,
-	) { }
+  public resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
+  ) {
+    this._view = webviewView;
 
-	public resolveWebviewView(
-		webviewView: vscode.WebviewView,
-		context: vscode.WebviewViewResolveContext,
-		_token: vscode.CancellationToken,
-	) {
-		this._view = webviewView;
+    webviewView.webview.options = {
+      // Allow scripts in the webview
+      enableScripts: true,
+      localResourceRoots: [this._extensionUri],
+    };
 
-		webviewView.webview.options = {
-			// Allow scripts in the webview
-			enableScripts: true,
-			localResourceRoots: [
-				this._extensionUri
-			]
-		};
-
-		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-	}
-
-  public displayOutput(output: string) {
-		if (this._view) {
-			this._view.webview.postMessage({ value: output });
-		}
+    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
   }
 
-	private _getHtmlForWebview(webview: vscode.Webview) {
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+  public displayOutput(output: string) {
+    if (this._view) {
+      this._view.webview.postMessage({ value: output });
+    }
+  }
 
-		return `<!DOCTYPE html>
+  private _getHtmlForWebview(webview: vscode.Webview) {
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
+    );
+
+    return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
@@ -118,5 +119,5 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
         <script src="${scriptUri}"></script>
 			</body>
 			</html>`;
-	}
+  }
 }
