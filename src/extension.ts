@@ -291,11 +291,12 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
           <hr/>
           <div id="output">
           </div>
-          <img src=${loadingIconUri}
-            style="width: 64px; height: 64px;" 
-            class="rotating"
-            id="loader"
-          />          
+          <div id="loader">
+            <img src=${loadingIconUri}
+              style="width: 40px; height: 40px;" 
+              class="rotating"
+            />
+          </div>       
         </div>
         <script src="${scriptUri}"></script>
 			</body>
