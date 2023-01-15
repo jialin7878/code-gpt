@@ -135,40 +135,43 @@ export function activate(context: vscode.ExtensionContext) {
   let writeDocumentationCommand = vscode.commands.registerCommand(
     "code-gpt.writeDocumentation",
     async () => {
-      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to write documentation for this code..."
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = await writeDocumentation(code);
       insertText(output);
+      provider.displayModified();
     }
   );
 
   let simplifyCodeCommand = vscode.commands.registerCommand(
     "code-gpt.simplifyCode",
     async () => {
-      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to check for simplifications..."
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = await simplifyCode(code);
       replaceText(output);
+      provider.displayModified();
     }
   );
 
   let standardiseCodeCommand = vscode.commands.registerCommand(
     "code-gpt.standardiseCode",
     async () => {
-      provider.show();
       const language = getLanguageOfDocument();
       vscode.window.showInformationMessage(
         `Pinging ChatGPT to rewrite code based on ${language} style guide...`
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = await standardiseCode(code, language);
       replaceText(output);
+      provider.displayModified();
     }
   );
 
@@ -261,6 +264,14 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
     if (this._view) {
       this._view.webview.postMessage({
         type: 'LOAD'
+      });      
+    }
+  }
+
+  public displayModified() {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'MODIFIED'
       });      
     }
   }

@@ -32,6 +32,14 @@ function displayLoader() {
   showLoaderSpinner();
 }
 
+function displayModified() {
+  hideLoaderSpinner();
+  document.getElementById("output").innerHTML = `<div>
+    <br/>
+    <pre><p>I have modified your code. Please take a look.</p></pre>
+  </div>`;
+}
+
 window.addEventListener("message", (event) => {
   const message = event.data;
   switch (message.type) {
@@ -41,5 +49,8 @@ window.addEventListener("message", (event) => {
     case "LOAD":
       displayLoader();
       break;
+    case "MODIFIED":
+      displayModified();
+      break;      
   }
 });
