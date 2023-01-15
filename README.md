@@ -12,5 +12,3 @@ CodeGPT brings this closer to the developer through a VS Code extension for Chat
 - Rewrite code based on style guide
 - Generate test cases
 - Analyze time complexity of a function
-
-![Alt text](https://github.com/jialin7878/code-gpt/blob/main/static/explain_code.png "a title")
