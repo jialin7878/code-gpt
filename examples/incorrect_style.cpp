@@ -2,9 +2,9 @@
 
 using namespace std;
 
-struct MyClass {};
+struct myCLAsswithmultiplewords {};
 
 int main() {
-    const double PI = 3.14; 
-    int my_integer = 20;
+    const double pi = 3.14; 
+    int myINTEGER = 20;
 }
