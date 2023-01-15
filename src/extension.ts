@@ -102,15 +102,6 @@ async function analyzeTimeComplexity(code: string): Promise<string> {
   return output.data.choices[0].text.trim();
 }
 
-async function analyzeSpaceComplexity(code: string): Promise<string> {
-  const output = await openai.createCompletion({
-    model: MODEL,
-    prompt: "Analyze the space complexity for this function: \n" + code,
-    max_tokens: MAX_OPENAI_TOKENS,
-  });
-  return output.data.choices[0].text.trim();
-}
-
 export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "code-gpt" is now active!');
 
@@ -205,30 +196,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  let analyzeSpaceComplexityCommand = vscode.commands.registerCommand(
-    "code-gpt.analyzeSpaceComplexity",
-    async () => {
-      vscode.window.showInformationMessage(
-        "Pinging ChatGPT to analyze space complexity of this function..."
-      );
-      const code = getSelectedText();
-      const output = await analyzeSpaceComplexity(code);
-      provider.displayOutput(
-        "The space complexity of this function is:",
-        code,
-        output
-      );
-    }
-  );
-
   context.subscriptions.push(
     explainCodeCommand,
     writeDocumentationCommand,
     simplifyCodeCommand,
     standardiseCodeCommand,
     generateTestcasesCommand,
-    analyzeTimeComplexityCommand,
-    analyzeSpaceComplexityCommand
+    analyzeTimeComplexityCommand
   );
 }
 
