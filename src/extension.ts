@@ -10,7 +10,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 const MODEL = "text-davinci-003";
-const MAX_OPENAI_TOKENS = 200;
+const MAX_OPENAI_TOKENS = 1000;
 
 function getSelectedText(): string {
   const editor = vscode.window.activeTextEditor;
