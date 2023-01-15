@@ -120,7 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
       CodeGPTOutputView.viewType,
       provider,
       {
-        webviewOptions: { retainContextWhenHidden: true }
+        webviewOptions: { retainContextWhenHidden: true },
       }
     )
   );
@@ -142,6 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
   let writeDocumentationCommand = vscode.commands.registerCommand(
     "code-gpt.writeDocumentation",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to write documentation for this code..."
       );
@@ -156,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
   let simplifyCodeCommand = vscode.commands.registerCommand(
     "code-gpt.simplifyCode",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to check for simplifications..."
       );
@@ -170,6 +172,7 @@ export function activate(context: vscode.ExtensionContext) {
   let standardiseCodeCommand = vscode.commands.registerCommand(
     "code-gpt.standardiseCode",
     async () => {
+      provider.show();
       const language = getLanguageOfDocument();
       vscode.window.showInformationMessage(
         `Pinging ChatGPT to rewrite code based on ${language} style guide...`
@@ -236,9 +239,7 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
 
-  constructor(
-    private readonly _extensionUri: vscode.Uri,
-  ) {}
+  constructor(private readonly _extensionUri: vscode.Uri) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -259,7 +260,7 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
   public displayOutput(title: string, code: string, output: string) {
     if (this._view) {
       this._view.webview.postMessage({
-        type: 'OUTPUT',
+        type: "OUTPUT",
         title: title,
         code: code,
         output: output,
@@ -270,16 +271,16 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
   public displayLoader() {
     if (this._view) {
       this._view.webview.postMessage({
-        type: 'LOAD'
-      });      
+        type: "LOAD",
+      });
     }
   }
 
   public displayModified() {
     if (this._view) {
       this._view.webview.postMessage({
-        type: 'MODIFIED'
-      });      
+        type: "MODIFIED",
+      });
     }
   }
 
