@@ -1,6 +1,10 @@
 
-window.addEventListener("message", (event) => {
-  const message = event.data;
+document.getElementById("output").innerHTML = `<div>
+  <br/>
+  <pre><p>Get started by trying a CodeGPT command.</p></pre>
+</div>`;
+
+function displayOutput(message) {
   document.getElementById("output").innerHTML = `<div>    
     <br/>
     <p><b><em>Source code:</em></b></p>
@@ -9,4 +13,23 @@ window.addEventListener("message", (event) => {
     <pre><p>${message.output}</p></pre>
     </pre>
   </div>`;
+}
+
+function displayLoader() {
+  document.getElementById("output").innerHTML = `<div>
+    <br/>
+    <pre><p>Hold on, I am thinking...</p></pre>
+  </div>`;
+}
+
+window.addEventListener("message", (event) => {
+  const message = event.data;
+  switch (message.type) {
+    case "OUTPUT":
+      displayOutput(message);
+      break;
+    case "LOAD":
+      displayLoader();
+      break;
+  }
 });

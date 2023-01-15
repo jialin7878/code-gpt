@@ -122,6 +122,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to explain this code..."
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = (await explainCode(code)).trim();
       provider.displayOutput("The explanation for the code is:", code, output);
@@ -175,6 +176,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to generate testcases..."
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = await generateTestcases(code);
       provider.displayOutput(
@@ -192,6 +194,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to analyze time complexity of this function..."
       );
+      provider.displayLoader();
       const code = getSelectedText();
       const output = await analyzeTimeComplexity(code);
       provider.displayOutput(
@@ -241,10 +244,19 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
   public displayOutput(title: string, code: string, output: string) {
     if (this._view) {
       this._view.webview.postMessage({
+        type: 'OUTPUT',
         title: title,
         code: code,
         output: output,
       });
+    }
+  }
+
+  public displayLoader() {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'LOAD'
+      });      
     }
   }
 
