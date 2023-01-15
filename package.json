@@ -11,7 +11,12 @@
   ],
   "activationEvents": [
     "onView:codegpt.output",
-    "onCommand:code-gpt.explainCode"
+    "onCommand:code-gpt.explainCode",
+    "onCommand:code-gpt.writeDocumentation",
+    "onCommand:code-gpt.simplifyCode",
+    "onCommand:code-gpt.standardiseCode",
+    "onCommand:code-gpt.generateTestcases",
+    "onCommand:code-gpt.analyzeTimeComplexity"
   ],
   "main": "./out/extension.js",
   "contributes": {
