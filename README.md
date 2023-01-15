@@ -1,4 +1,4 @@
-# code-gpt README
+# code-gpt
 
 Sick and tired of writing repetitive documentation, tests, or reading convoluted code? Introducing CodeGPT, a VSCode extension integrated with ChatGPT to greatly streamline your development process.
 
