@@ -259,6 +259,9 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
     );
+    const loadingIconUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "static", "chatgpt_white.png")
+    );
 
     return `<!DOCTYPE html>
 			<html lang="en">
@@ -272,6 +275,10 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
         <div class="main">
           <h3 class="title">Hi, I am ChatGPT.</h3>
           <hr/>
+          <img src=${loadingIconUri}
+            style="width: 64px; height: 64px;" 
+            class="rotating"
+          />
           <div id="output">
           </div>
         </div>

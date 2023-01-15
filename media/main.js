@@ -1,4 +1,3 @@
-
 window.addEventListener("message", (event) => {
   const message = event.data;
   document.getElementById("output").innerHTML = `<div>    
