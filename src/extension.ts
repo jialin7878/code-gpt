@@ -118,6 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
   let explainCodeCommand = vscode.commands.registerCommand(
     "code-gpt.explainCode",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to explain this code..."
       );
@@ -130,6 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
   let writeDocumentationCommand = vscode.commands.registerCommand(
     "code-gpt.writeDocumentation",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to write documentation for this code..."
       );
@@ -142,6 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
   let simplifyCodeCommand = vscode.commands.registerCommand(
     "code-gpt.simplifyCode",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to check for simplifications..."
       );
@@ -154,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
   let standardiseCodeCommand = vscode.commands.registerCommand(
     "code-gpt.standardiseCode",
     async () => {
+      provider.show();
       const language = getLanguageOfDocument();
       vscode.window.showInformationMessage(
         `Pinging ChatGPT to rewrite code based on ${language} style guide...`
@@ -167,6 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
   let generateTestcasesCommand = vscode.commands.registerCommand(
     "code-gpt.generateTestcases",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to generate testcases..."
       );
@@ -183,6 +188,7 @@ export function activate(context: vscode.ExtensionContext) {
   let analyzeTimeComplexityCommand = vscode.commands.registerCommand(
     "code-gpt.analyzeTimeComplexity",
     async () => {
+      provider.show();
       vscode.window.showInformationMessage(
         "Pinging ChatGPT to analyze time complexity of this function..."
       );
@@ -240,6 +246,10 @@ class CodeGPTOutputView implements vscode.WebviewViewProvider {
         output: output,
       });
     }
+  }
+
+  public show() {
+    this._view?.show();
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
