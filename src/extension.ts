@@ -11,6 +11,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 const MODEL = "text-davinci-003";
 const MAX_OPENAI_TOKENS = 1000;
+const TEMPERATURE = 0;
 
 function getSelectedText(): string {
   const editor = vscode.window.activeTextEditor;
@@ -50,6 +51,7 @@ async function explainCode(code: string): Promise<string> {
     model: MODEL,
     prompt: "Explain this function:\n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
@@ -59,6 +61,7 @@ async function writeDocumentation(code: string): Promise<string> {
     model: MODEL,
     prompt: "Insert documentation for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
@@ -68,6 +71,7 @@ async function simplifyCode(code: string): Promise<string> {
     model: MODEL,
     prompt: "Simplify this code: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
@@ -80,6 +84,7 @@ async function standardiseCode(
     model: MODEL,
     prompt: `Rewrite this code based on ${language} style guide:\n ${code}`,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
@@ -89,6 +94,7 @@ async function generateTestcases(code: string): Promise<string> {
     model: MODEL,
     prompt: "Generate testcases for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
@@ -98,6 +104,7 @@ async function analyzeTimeComplexity(code: string): Promise<string> {
     model: MODEL,
     prompt: "Analyze the time complexity for this function: \n" + code,
     max_tokens: MAX_OPENAI_TOKENS,
+    temperature: TEMPERATURE,
   });
   return output.data.choices[0].text.trim();
 }
